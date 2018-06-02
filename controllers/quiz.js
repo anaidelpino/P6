@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const {models} = require("../models");
+const Op = Sequelize.Op;
 
 
 // Autoload the quiz with id equals to :quizId
@@ -138,51 +139,49 @@ exports.play = (req, res, next) => {
         answer
     });
 };
-//GET /quizzes/randomplay
+///GET /quizzes/randomplay
 exports.randomplay = (req, res, next) =>{
-
-    console.log("quizzes: " + req.session.quizzes);
-    console.log("score: "+ req.session.score);
     const {quiz, query} = req;
+    var toBeResolved=[];
     const answer = query.answer || "";
     var lon = 0;
-    var ps = [];
-/
+    
+
     if(req.session.quizzes === undefined){
         req.session.score =0;
         models.quiz.findAll()
         .then(quizzes => {
             
             req.session.quizzes = quizzes;
-            
-            console.log("quizzes1: " + req.session.quizzes);
-            console.log("score1: "+ req.session.score);
+          
 
             lon = req.session.quizzes;
-            var i = Math.floor(Math.random() * lon.length);
-            var q = req.session.quizzes[i];
-            req.session.quizzes.splice(i, 1);
+             var random = Math.floor(Math.random() * lon.length);
+             var a = req.session.quizzes[random];
+            
+            
+            req.session.quizzes.splice(random, 1);
             res.render('quizzes/random_play', {
                 score: req.session.score,
-                quiz: q
+                quiz: a
             });
         })
         .catch(err => console.log(err));
 
     }else{
-        ps = req.session.quizzes;
-        if(ps.length === 0){
+        toBeResolved = req.session.quizzes;
+        if(toBeResolved.length === 0){
             var score = req.session.score;
             
             res.render('quizzes/random_none', {score: score});
         }else{
             lon = req.session.quizzes.length;
-            var i = Math.floor(Math.random() * lon);
-            var q = req.session.quizzes[i];
-            req.session.quizzes.splice(i, 1);
+             var random = Math.floor(Math.random() * lon);
+             var a = req.session.quizzes[random];
+            req.session.quizzes.splice(random, 1);
             res.render('quizzes/random_play', {
                 score: req.session.score,
-                quiz: q
+                quiz: a
             });
         }
 }

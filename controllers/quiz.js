@@ -146,6 +146,7 @@ exports.randomplay = (req, res, next) =>{
     const answer = query.answer || "";
     var lon = 0;
     
+    
 
     if(req.session.quizzes === undefined){
         req.session.score =0;
